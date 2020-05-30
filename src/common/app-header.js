@@ -14,7 +14,7 @@ const AppHeader = () => (
             <div className="collapse navbar-collapse" id="navbarNav">
                 <span className="small text-white-50">Order books and trade history viewer web app by Izhar ,</span>
                 <span className="small text-white-50">
-          <a href='https://github.com/izharkhanit/ReactNativeApp'> See my portfolio </a> </span>
+          <a href='https://github.com/izharkhanit/BINANCE-TRADE-ORDER-BOOK-APP'> See my portfolio </a> </span>
          
             </div>
         </nav>
