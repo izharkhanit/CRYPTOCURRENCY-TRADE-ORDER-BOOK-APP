@@ -1,7 +1,8 @@
 # Cryptocurrency Order-Book Front-end using React, Redux 
 
-# Live Demo 
- [Cryptocurrency Order Book](https://cryptocurrency-trade-order-app.firebaseapp.com/)
+## Live Demo 
+[Cryptocurrency Order Book](https://cryptocurrency-trade-order-app.firebaseapp.com/)
+URL: https://cryptocurrency-trade-order-app.firebaseapp.com/
 
  Crypto-currency Order Book App which is single page application(Responsive) for Web, Mobile and Tab.
  Here we can select the market tab and compare. After selecting the particular market eg. (WTCBNB)
