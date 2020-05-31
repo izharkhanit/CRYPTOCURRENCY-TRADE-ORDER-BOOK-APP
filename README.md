@@ -1,2 +1,2 @@
-# Binance Trade Order-Book Front-end using React, Redux 
+# Cryptocurrency Trade Order-Book Front-end using React, Redux 
 
