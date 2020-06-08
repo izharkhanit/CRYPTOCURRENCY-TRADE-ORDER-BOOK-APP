@@ -26,47 +26,25 @@ class MarketPairs extends React.Component {
         })
     }
 
-    // _getTickerBySymbol(data) {
-    //     let ticker = {}
-    //     data.forEach(item => {
-    //         let symbol = item.symbol || item.s;
-    //         ticker[symbol] = {
-    //             symbol: symbol,
-    //             lastPrice: item.lastPrice || item.c,
-    //             priceChange: item.priceChange || item.p,
-    //             priceChangePercent: item.priceChangePercent || item.P,
-    //             highPrice: item.highPrice || item.h,
-    //             lowPrice: item.lowPrice || item.l,
-    //             quoteVolume: item.quoteVolume || item.q,
-    //         }
-    //     }) 
-    //     return ticker;
-    // }
-
-    // _connectSocketStreams(streams) {
-    //     streams = streams.join('/');
-    //     let connection = btoa(streams);
-    //     this[connection] = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-    //     this[connection].onmessage = evt => { 
-    //         let ticker = this._getTickerBySymbol(JSON.parse(evt.data).data)
-    //         console.log('ticker---->',ticker);
-    //         this.props.dispatch({
-    //             type: 'UPDATE_MARKET_PAIRS',
-    //             data: ticker
-    //         })
-    //         !this.props.active_market.market && this._handleTabClick('BTC')
-    //         this.setState({
-    //             isLoaded: true
-    //         })
-    //     }
-    //     this[connection].onerror = evt => {
-    //         console.error(evt);
-    //     }
-    // }
-
-    // _connectSocketStreamsAfterSaga() {
-        
-    // }
+    _connectSocketStreams(streams) {
+        streams = streams.join('/');
+        let connection = btoa(streams);
+        this[connection] = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+        this[connection].onmessage = evt => { 
+            let ticker = this._getTickerBySymbol(JSON.parse(evt.data).data)
+            this.props.dispatch({
+                type: 'UPDATE_MARKET_PAIRS',
+                data: ticker
+            })
+            !this.props.active_market.market && this._handleTabClick('BTC')
+            this.setState({
+                isLoaded: true
+            })
+        }
+        this[connection].onerror = evt => {
+            console.error(evt);
+        }
+    }
 
     _disconnectSocketStreams(streams){
         streams = streams.join('/');
@@ -121,11 +99,12 @@ const mapStateToProps = (state) =>({
 
 const mapDispatchToProps = dispatch => {
     return{
-        connectSocketStreams:()=> dispatch({type: 'UPDATE_MARKET_PAIRS', payload:{streams:['!ticker@arr']}})
+        connectSocketStreams:()=> dispatch({type: 'CONNECT_SOCKET_STREAM', payload:{streams:['!ticker@arr']}})
     }
 }
 
 export default connect(
+    // state => state
     mapStateToProps,
     mapDispatchToProps
 )(MarketPairs)

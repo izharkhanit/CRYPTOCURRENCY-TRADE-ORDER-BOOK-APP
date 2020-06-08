@@ -1,55 +1,68 @@
-import { takeEvery, put, call, take } from 'redux-saga/effects'
-import {
-    updateMarketPairs
-} from '../actions/updateMarketPairs'
+import {eventChannel, END} from 'redux-saga';
+import { all, fork, take, call, put, takeEvery } from 'redux-saga/effects';
+
+import {updateMarketData} from '../actions/updateMarketPairs'
+
+let ws;
+
+function createEventChannel() {
+    return eventChannel(emit => {
+          function createWs() {
+            //Subscribe to websocket
+            const streams = ['!ticker@arr']
+            const allStreams = streams && streams.join('/');
+            
+            ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${allStreams}`);
+
+            ws.onopen = () => {
+                console.log("Opening Websocket");
+            };
+
+            ws.onerror = error => {
+                console.log("ERROR: ", error);
+            };
+
+            ws.onmessage = e => {
+                return emit({data: JSON.parse(e.data)})
+            };
+
+            ws.onclose = e => {
+                if (e.code === 1005) {
+                    console.log("WebSocket: closed");
+                    emit(END);
+                } else {
+                    console.log('Socket is closed Unexpectedly. Reconnect will be attempted in 4 second.', e.reason);
+                    setTimeout(() =>  {
+                        createWs();
+                    }, 4000);
+                }
+            };
+        }
+        createWs();
+
+        return () => {
+            console.log("Closing Websocket");
+            ws.close();
+        };
+    });
+}
+
+
+function * initializeWebSocketsChannel() {
+  const channel = yield call(createEventChannel);
+  while (true) {
+      const {data} = yield take(channel);
+      yield put(updateMarketData(data));
+  }
+}
+
+export function * initWebSocket() {
+  yield takeEvery('CONNECT_SOCKET_STREAM', initializeWebSocketsChannel);
+}
 
 export default function* marketPairsSagas() {
-    yield takeEvery("UPDATE_MARKET_PAIRS", connectSocketStreams)
-
+    yield all([
+      fork(initWebSocket)
+    ]);
 }
   
-function doAction (data){
-    let ticker = {}
-    data.forEach(item => {
-        let symbol = item.symbol || item.s;
-        ticker[symbol] = {
-            symbol: symbol,
-            lastPrice: item.lastPrice || item.c,
-            priceChange: item.priceChange || item.p,
-            priceChangePercent: item.priceChangePercent || item.P,
-            highPrice: item.highPrice || item.h,
-            lowPrice: item.lowPrice || item.l,
-            quoteVolume: item.quoteVolume || item.q,
-        }
-    }) 
-    return ticker;
-
-}
-
-function* foo (tickerdata) {
-    console.log("yielding");  // appears in console
-    console.log('after yielding tickerdata',tickerdata);
-    yield put(updateMarketPairs(tickerdata));  // action *is not* dispatched
-    console.log("yielded"); //appears in console
-}
-
- function connectSocketStreams(action) {
-    const payload = action.payload
-    const allStreams = payload.streams && payload.streams.join('/');
-    let connection = btoa(allStreams);
-    connection = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${allStreams}`);
-    connection.onmessage = evt => {
-        // yield put({ type: 'ACTION_TYPE', payload: JSON.parse(evt.data)})
-        let tickerdata = doAction(JSON.parse(evt.data).data);
-        const iter = foo(tickerdata);
-        iter.next();
-        // yield put(updateMarketPairs(tickerdata));
-        console.log('tickerdata saga---->',tickerdata);
-    }
-    connection.onerror = evt => {
-        console.error(evt);
-    }
-    // yield put(updateMarketPairs(tickerdata));
-}
-
-
