@@ -14,6 +14,8 @@ function createEventChannel() {
             
             ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${allStreams}`);
 
+        
+
             ws.onopen = () => {
                 console.log("Opening Websocket");
             };
@@ -22,8 +24,27 @@ function createEventChannel() {
                 console.log("ERROR: ", error);
             };
 
+            function _getTickerBySymbol(data) {
+              let ticker = {}
+              data.forEach(item => {
+                  let symbol = item.symbol || item.s;
+                  ticker[symbol] = {
+                      symbol: symbol,
+                      lastPrice: item.lastPrice || item.c,
+                      priceChange: item.priceChange || item.p,
+                      priceChangePercent: item.priceChangePercent || item.P,
+                      highPrice: item.highPrice || item.h,
+                      lowPrice: item.lowPrice || item.l,
+                      quoteVolume: item.quoteVolume || item.q,
+                  }
+              }) 
+              return ticker;
+            }
+
             ws.onmessage = e => {
-                return emit({data: JSON.parse(e.data)})
+              let ticker = _getTickerBySymbol(JSON.parse(e.data).data)
+              console.log(ticker);
+                return emit({data: ticker})
             };
 
             ws.onclose = e => {
