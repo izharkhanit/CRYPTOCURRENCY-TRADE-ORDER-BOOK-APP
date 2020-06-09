@@ -43,8 +43,8 @@ function createEventChannel() {
 
             ws.onmessage = e => {
               let ticker = _getTickerBySymbol(JSON.parse(e.data).data)
-              console.log(ticker);
-                return emit({data: ticker})
+              // console.log(ticker);
+                return emit({  type: 'UPDATE_MARKET_PAIRS', data: ticker})
             };
 
             ws.onclose = e => {

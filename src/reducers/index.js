@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux'
 
 const MarketPairs = (state = {}, action) => {
+    // console.log("action----->",action.payload);
     switch (action.type) {
         case 'ADD_MARKET_PAIRS':
-            return Object.assign({}, action.data)      
+            return Object.assign({}, action.payload)      
         case 'UPDATE_MARKET_PAIRS':
-            return Object.assign({}, state, action.data)
+            return Object.assign({}, state, action.payload)
         default:
             return state
     }
@@ -14,7 +15,7 @@ const MarketPairs = (state = {}, action) => {
 const ActiveMarket = (state = {}, action) => {
     switch (action.type) {
         case 'SET_ACTIVE_MARKET':
-            return Object.assign({}, action.data)
+            return Object.assign({}, action.payload)
         default:
             return state
     }
@@ -23,7 +24,7 @@ const ActiveMarket = (state = {}, action) => {
 const Ticker = (state = {}, action) => {
     switch (action.type) {
         case 'SET_TICKER':
-            return Object.assign({}, action.data)
+            return Object.assign({}, action.payload)
         default:
             return state
     }
@@ -41,7 +42,7 @@ const Trades = (state = {}, action) => {
 const Depth = (state = {}, action) => {
     switch (action.type) {
         case 'SET_DEPTH':
-            return Object.assign({}, action.data)
+            return Object.assign({}, action.payload)
         default:
             return state
     }

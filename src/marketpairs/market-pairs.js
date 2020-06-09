@@ -2,11 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Loading from '../common/loading'
 import DataTable from './data-table'
+import { marketpairsSelector } from './../selectors/marketpairsSelectors';
 
 class MarketPairs extends React.Component {
 
     constructor(props) {
         super(props);
+        // console.log('this.props constructor-->',this.props);
         this.state = {
             isLoaded: this.props.market_pairs && this.props.active_market.filtered_pairs
         };
@@ -26,26 +28,6 @@ class MarketPairs extends React.Component {
         })
     }
 
-    // _connectSocketStreams(streams) {
-    //     streams = streams.join('/');
-    //     let connection = btoa(streams);
-    //     this[connection] = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-    //     this[connection].onmessage = evt => { 
-    //         let ticker = this._getTickerBySymbol(JSON.parse(evt.data).data)
-    //         this.props.dispatch({
-    //             type: 'UPDATE_MARKET_PAIRS',
-    //             data: ticker
-    //         })
-    //         !this.props.active_market.market && this._handleTabClick('BTC')
-    //         this.setState({
-    //             isLoaded: true
-    //         })
-    //     }
-    //     this[connection].onerror = evt => {
-    //         console.error(evt);
-    //     }
-    // }
-
     _disconnectSocketStreams(streams){
         streams = streams.join('/');
         let connection = btoa(streams);
@@ -64,16 +46,18 @@ class MarketPairs extends React.Component {
     }
 
     render() {
-        const { error, isLoaded } = this.state;
+        const { error, isLoaded} = this.state;
+        const {items,fetched} = this.props;
         if (error) {
           return <div className="alert alert-danger">{error.message}</div>;
         }
         if (!isLoaded) {
           return <Loading />;
         }
-        // console.log(this.props);
+      
         return (
             <React.Fragment>
+                izhar
                 <ul className="nav nav-tabs pt-2">
                     <li className="nav-item">
                         <a className={this.props.active_market.market === 'BNB' ? 'nav-link active' : 'nav-link'} onClick={this._handleTabClick} data-tab="BNB">BNB<span className="d-none d-sm-inline"> Markets</span></a>
@@ -89,14 +73,21 @@ class MarketPairs extends React.Component {
                     </li>    
                 </ul>
                 {this.props.market_pairs && this.props.active_market.filtered_pairs ? <DataTable ticker={this.props.market_pairs} filter={this.props.active_market.filtered_pairs} /> : <Loading />}
+              
             </React.Fragment>    
       )
     }
 
 }
-const mapStateToProps = (state) =>({
-    
-})
+
+const mapStateToProps = (state) => {
+    console.log('state---->',state);
+    const items = marketpairsSelector(state);
+    return {
+        items,
+        fetched: items !== null
+    }
+};
 
 const mapDispatchToProps = dispatch => {
     return{

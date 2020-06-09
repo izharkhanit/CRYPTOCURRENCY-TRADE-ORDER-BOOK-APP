@@ -1,0 +1,1 @@
+export { marketpairsSelector } from './marketpairsSelectors';

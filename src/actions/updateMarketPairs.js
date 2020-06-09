@@ -4,4 +4,4 @@
 
 import { createAction } from 'redux-act';
 
-export const updateMarketData = createAction('UPDATE_MARKET_ACTION');
+export const updateMarketData = createAction('UPDATE_MARKET_PAIRS');
