@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux'
 
 const MarketPairs = (state = {}, action) => {
-    // console.log("action----->",action.payload);
     switch (action.type) {
         case 'ADD_MARKET_PAIRS':
             return Object.assign({}, action.payload)      

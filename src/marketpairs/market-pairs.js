@@ -8,25 +8,20 @@ class MarketPairs extends React.Component {
 
     constructor(props) {
         super(props);
-        // console.log('this.props constructor-->',this.props);
         this.state = {
             isLoaded: this.props.market_pairs && this.props.active_market.filtered_pairs
+         
         };
-        this._handleTabClick = this._handleTabClick.bind(this);
+        this.handleTabClick = this.handleTabClick.bind(this);
     }
 
-    
-
-    _handleTabClick(e) {
-        let market = e.currentTarget ? e.currentTarget.getAttribute('data-tab') : e;
-        this.props.dispatch({
-            type: 'SET_ACTIVE_MARKET',
-            data: {
-                filtered_pairs: Object.keys(this.props.market_pairs).filter(item => item.endsWith(market)),
-                market: market
-            }
-        })
-    }
+     handleTabClick(itemsdata){
+        let market = 'BNB';
+        let data = Object.keys(itemsdata).filter(item => item.endsWith(market));
+        // console.log('data',data);
+        return data;
+       
+     }
 
     _disconnectSocketStreams(streams){
         streams = streams.join('/');
@@ -37,7 +32,6 @@ class MarketPairs extends React.Component {
     }
 
     componentDidMount() {
-        // this._connectSocketStreams(['!ticker@arr'])
         this.props.connectSocketStreams(['!ticker@arr'])
     }
 
@@ -48,17 +42,17 @@ class MarketPairs extends React.Component {
     render() {
         const { error, isLoaded} = this.state;
         const {items,fetched} = this.props;
+        // console.log("items coming as market_pairs",items);
+        const fetchedOne = this.handleTabClick(items);
+        
         if (error) {
           return <div className="alert alert-danger">{error.message}</div>;
-        }
-        if (!isLoaded) {
-          return <Loading />;
         }
       
         return (
             <React.Fragment>
-                izhar
-                <ul className="nav nav-tabs pt-2">
+              {/* TO DO LATER */}
+                {/* <ul className="nav nav-tabs pt-2">
                     <li className="nav-item">
                         <a className={this.props.active_market.market === 'BNB' ? 'nav-link active' : 'nav-link'} onClick={this._handleTabClick} data-tab="BNB">BNB<span className="d-none d-sm-inline"> Markets</span></a>
                     </li>
@@ -71,8 +65,8 @@ class MarketPairs extends React.Component {
                     <li className="nav-item">
                         <a className={this.props.active_market.market === 'USDT' ? 'nav-link active' : 'nav-link'} onClick={this._handleTabClick} data-tab="USDT">USDT<span className="d-none d-sm-inline"> Markets</span></a>
                     </li>    
-                </ul>
-                {this.props.market_pairs && this.props.active_market.filtered_pairs ? <DataTable ticker={this.props.market_pairs} filter={this.props.active_market.filtered_pairs} /> : <Loading />}
+                </ul> */}
+                {items && fetchedOne  ? <DataTable ticker={items} filter={fetchedOne} /> : <Loading />}
               
             </React.Fragment>    
       )
@@ -80,14 +74,9 @@ class MarketPairs extends React.Component {
 
 }
 
-const mapStateToProps = (state) => {
-    console.log('state---->',state);
-    const items = marketpairsSelector(state);
-    return {
-        items,
-        fetched: items !== null
-    }
-};
+const mapStateToProps = (state) => ({
+    items : state.market_pairs     
+});
 
 const mapDispatchToProps = dispatch => {
     return{
@@ -96,7 +85,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(
-    // state => state
     mapStateToProps,
     mapDispatchToProps
 )(MarketPairs)

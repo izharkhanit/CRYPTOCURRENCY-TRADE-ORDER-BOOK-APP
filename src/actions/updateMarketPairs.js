@@ -5,3 +5,4 @@
 import { createAction } from 'redux-act';
 
 export const updateMarketData = createAction('UPDATE_MARKET_PAIRS');
+export const setActiveMarketData = createAction('SET_ACTIVE_MARKET');
