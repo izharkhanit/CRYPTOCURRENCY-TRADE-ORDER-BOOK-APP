@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Binance from './Binance.svg'
+//import Binance from './Binance.svg'
 
 const AppHeader = () => (
     <header>
