@@ -38,7 +38,7 @@ class MarketPairs extends React.Component {
     componentWillUnmount() {
         this._disconnectSocketStreams(['!ticker@arr'])
     }
-
+// hello I am Izhar how are you
     render() {
         const { error, isLoaded} = this.state;
         const {items,fetched} = this.props;
